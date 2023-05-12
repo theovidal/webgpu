@@ -4,7 +4,7 @@ Some experiments with the upcoming web API for 2D and 3D graphics
 
 ## 💻 Development
 
-The app is written using TypeScript and compiled with vite (Rollup) ; install the dependencies and run the project. The entry point is `public/index.html`.
+The app is written using TypeScript and compiled with vite (Rollup) ; install the dependencies and run the project. The entry point is `index.html`.
 
 With NPM :
 

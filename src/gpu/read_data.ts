@@ -1,8 +1,8 @@
-import { ReadData } from "../data/shaders"
+import ReadData from '../data/shaders/read_data'
 
-async function readFromGPU() {
+async function readFromGPU(device: GPUDevice, bufferSize: number) {
     const module = device.createShaderModule({
-        code: ReadData().vertex
+        code: ReadData.vertex
     })
 
     const layout = device.createBindGroupLayout({
@@ -28,11 +28,11 @@ async function readFromGPU() {
     })
 
     const output = device.createBuffer({
-        size: BUFFER_SIZE,
+        size: bufferSize,
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC
     })
     const stagingBuffer = device.createBuffer({
-        size: BUFFER_SIZE,
+        size: bufferSize,
         usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST
     })
     const bindGroup = device.createBindGroup({
@@ -49,21 +49,23 @@ async function readFromGPU() {
     const passEncoder = commandEncoder.beginComputePass()
     passEncoder.setPipeline(pipeline)
     passEncoder.setBindGroup(0, bindGroup)
-    passEncoder.dispatchWorkgroups(Math.ceil(BUFFER_SIZE / 64))
+    passEncoder.dispatchWorkgroups(Math.ceil(bufferSize / 64))
     passEncoder.end()
     commandEncoder.copyBufferToBuffer(
         output,
         0, // Source offset
         stagingBuffer,
         0, // Destination offset
-        BUFFER_SIZE
+        bufferSize
     )
     const commands = commandEncoder.finish()
     device.queue.submit([commands])
 
-    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, BUFFER_SIZE)
-    const copyArrayBuffer = stagingBuffer.getMappedRange(0, BUFFER_SIZE)
-    const data = copyArrayBuffer.slice()
+    await stagingBuffer.mapAsync(GPUMapMode.READ, 0, bufferSize)
+    const copyArrayBuffer = stagingBuffer.getMappedRange(0, bufferSize)
+    const data = copyArrayBuffer.slice(0)
     stagingBuffer.unmap()
     console.log(new Float32Array(data))
 }
+
+export default readFromGPU

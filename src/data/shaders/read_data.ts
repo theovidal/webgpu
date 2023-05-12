@@ -1,4 +1,4 @@
-export default (_ : Object = {}) => ({
+export default {
     vertex: /* wgsl */`
     @group(0) @binding(1) // cf line 20
     var<storage, read_write> output: array<f32>;
@@ -8,4 +8,4 @@ export default (_ : Object = {}) => ({
         output[global_id.x] = f32(global_id.x) * 1000. + f32(local_id.x);
     }`,
     fragment: null
-})
+}

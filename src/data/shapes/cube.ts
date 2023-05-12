@@ -1,5 +1,5 @@
 import utils from '../../utils'
-import { ShapeDefinition } from './shape'
+import { Shape, ShapeDefinition } from './shape'
 
 const cube : ShapeDefinition = {
     position: new Float32Array([
@@ -139,4 +139,9 @@ const cube : ShapeDefinition = {
     ])
 }
 
-export default cube
+export class Cube extends Shape {
+    constructor() {
+        super()
+        this.definition = cube
+    }
+}

@@ -1,13 +1,11 @@
-import { Scene } from '../types'
-
-function createUniformBuffer(scene: Scene, size: number) : { uniformBuffer: GPUBuffer, uniformBindGroup: GPUBindGroup } {
-    const uniformBuffer = scene.device.createBuffer({
+export function createUniformBuffer(device: GPUDevice, pipeline: GPURenderPipeline, size: number) : { uniformBuffer: GPUBuffer, uniformBindGroup: GPUBindGroup } {
+    const uniformBuffer = device.createBuffer({
         size: size,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
     })
 
-    const uniformBindGroup = scene.device.createBindGroup({
-        layout: scene.pipeline.getBindGroupLayout(0),
+    const uniformBindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
         entries: [
             {
                 binding: 0,
@@ -20,5 +18,3 @@ function createUniformBuffer(scene: Scene, size: number) : { uniformBuffer: GPUB
 
     return { uniformBuffer, uniformBindGroup }
 }
-
-export default createUniformBuffer
