@@ -1,10 +1,10 @@
-export default (_ : Object = {}) => ({
+export default {
     vertex: /* wgsl */`
     struct Uniforms {
-        modelViewProjectionMatrix : mat4x4<f32>,
+        viewProjection : mat4x4<f32>,
         translation : vec4<f32>,
         rotation : vec3<f32>,
-        scale : f32,
+        scale : vec3<f32>,
     }
     @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 
@@ -17,25 +17,31 @@ export default (_ : Object = {}) => ({
     @vertex
     fn main(@location(0) position : vec4<f32>, @location(1) color : vec4<f32>, @location(2) uv : vec2<f32>) -> VertexOutput {
         var output : VertexOutput;
-        var xRotationMatrix: mat4x4<f32> = mat4x4<f32>(
+        var scale: mat4x4<f32> = mat4x4<f32>(
+            vec4<f32>(uniforms.scale.x, 0.0, 0.0, 0.0),
+            vec4<f32>(0.0, uniforms.scale.y, 0.0, 0.0),
+            vec4<f32>(0.0, 0.0, uniforms.scale.z, 0.0),
+            vec4<f32>(0.0, 0.0, 0.0, 1.0)
+        );
+        var xRotation: mat4x4<f32> = mat4x4<f32>(
             vec4<f32>(1.0, 0.0, 0.0, 0.0),
             vec4<f32>(0.0, cos(uniforms.rotation.x), sin(uniforms.rotation.x), 0.0),
             vec4<f32>(0.0, -sin(uniforms.rotation.x), cos(uniforms.rotation.x), 0.0),
             vec4<f32>(0.0, 0.0, 0.0, 1.0)
         );
-        var yRotationMatrix: mat4x4<f32> = mat4x4<f32>(
+        var yRotation: mat4x4<f32> = mat4x4<f32>(
             vec4<f32>(cos(uniforms.rotation.y), 0.0, -sin(uniforms.rotation.y), 0.0),
             vec4<f32>(0.0, 1.0, 0.0, 0.0),
             vec4<f32>(sin(uniforms.rotation.y), 0.0, cos(uniforms.rotation.y), 0.0),
             vec4<f32>(0.0, 0.0, 0.0, 1.0)
         );
-        var zRotationMatrix: mat4x4<f32> = mat4x4<f32>(
+        var zRotation: mat4x4<f32> = mat4x4<f32>(
             vec4<f32>(cos(uniforms.rotation.z), sin(uniforms.rotation.z), 0.0, 0.0),
             vec4<f32>(-sin(uniforms.rotation.z), cos(uniforms.rotation.z), 0.0, 0.0),
             vec4<f32>(0.0, 0.0, 1.0, 0.0),
             vec4<f32>(0.0, 0.0, 0.0, 1.0)
         );
-        output.Position = uniforms.modelViewProjectionMatrix * xRotationMatrix * yRotationMatrix * zRotationMatrix * (uniforms.scale * position) + uniforms.translation;
+        output.Position = uniforms.viewProjection * (xRotation * yRotation * zRotation * (scale * position) + uniforms.translation);
         output.Color = color;
         output.UV = uv;
         return output;
@@ -47,4 +53,4 @@ export default (_ : Object = {}) => ({
         return Color;
     }
     `
-})
+}
