@@ -1,5 +1,5 @@
 import { createUniformBuffer } from "../../gpu/uniform"
-import { Camera } from "../../render/camera"
+import { Camera } from "../../render/first_person"
 import { Scene } from "../../render/scene"
 
 export type ShapeDefinition = {

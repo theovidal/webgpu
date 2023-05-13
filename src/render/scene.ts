@@ -2,7 +2,7 @@
 
 import TriangleShader from '../data/shaders/triangle'
 import { Shape } from '../data/shapes/shape'
-import { Camera } from './camera'
+import { Camera } from './first_person'
 
 export const BUFFER_SIZE = 4 * (16 + 4 + 4 + 4)
 
