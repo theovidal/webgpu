@@ -1,4 +1,5 @@
 import { vec3, mat4, quat } from 'gl-matrix'
+import utils from '../utils'
 
 type Keys = { [key: string]: (camera: Camera) => void }
 
@@ -18,7 +19,7 @@ function applyQuatVec(q: quat, v: vec3) {
 }
 
 // Multiply a quaternion with a quaternion
-function applyQuatQuat(q1: quat, q2: quat) {
+/*function applyQuatQuat(q1: quat, q2: quat) {
     const [x1, y1, z1, w1] = q1
     const [x2, y2, z2, w2] = q2
 
@@ -28,7 +29,7 @@ function applyQuatQuat(q1: quat, q2: quat) {
     const z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
 
     return quat.fromValues(x, y, z, w)
-}
+}*/
 
 export const keymap: Keys = {
     '+': (camera: Camera) => camera.position.y += 0.1,
@@ -92,30 +93,30 @@ export class Camera {
     }
 
     right(step : number = 0.1) {
-        const right = vec3.create()
-        vec3.cross(right, [this.view[0], 0, this.view[2]], [0, 1, 0])
+         const right = vec3.cross(vec3.create(), [this.view[0], 0, this.view[2]], [0, 1, 0])
         vec3.normalize(right, right)
         vec3.scale(right, right, step)
+
         this.position.x += right[0]
         this.position.z += right[2]
     }
 
     left(step : number = 0.1) {
-        const right = vec3.create()
-        vec3.cross(right, [this.view[0], 0, this.view[2]], [0, 1, 0])
+        const right = vec3.cross(vec3.create(), [this.view[0], 0, this.view[2]], [0, 1, 0])
         vec3.normalize(right, right)
         vec3.scale(right, right, step)
+
         this.position.x -= right[0]
         this.position.z -= right[2]
     }
 
     turnLeft(angle : number = 0.1) {
-        this.rotation.horizontal += angle
+        this.rotation.horizontal = (this.rotation.horizontal + angle) % (2 * Math.PI)
         this.view = vec3.rotateY(this.view, this.view, [0, 0, 0], angle)
     }
 
     turnRight(angle : number = 0.1) {
-        this.rotation.horizontal -= angle
+        this.rotation.horizontal = (this.rotation.horizontal - angle) % (2 * Math.PI)
         this.view = vec3.rotateY(this.view, this.view, [0, 0, 0], -angle)
     }
 
@@ -153,8 +154,8 @@ export class Camera {
         document.getElementById('f3-y')!.innerText = this.position.y.toString()
         document.getElementById('f3-z')!.innerText = this.position.z.toString()
 
-        document.getElementById('f3-h')!.innerText = this.rotation.horizontal.toString()
-        document.getElementById('f3-v')!.innerText = this.rotation.vertical.toString()
+        document.getElementById('f3-h')!.innerText = utils.radiansToDegrees(this.rotation.horizontal).toString()
+        document.getElementById('f3-v')!.innerText = utils.radiansToDegrees(this.rotation.vertical).toString()
 
         const src = vec3.fromValues(this.position.x, this.position.y, this.position.z)
         const dest = vec3.add(vec3.create(), src, this.view)
