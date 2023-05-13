@@ -73,6 +73,19 @@ export class Camera {
             }  
         })
 
+        document.addEventListener('mousemove', (e : MouseEvent) => {
+            e.preventDefault()
+            console.log(e)
+            if (e.movementY < 0) this.turnUp()
+            else if (e.movementY > 0) this.turnDown()
+
+            if (e.movementX > 0) this.turnRight()
+            else if (e.movementX < 0) this.turnLeft()
+
+            const event = new Event('camera')
+            document.dispatchEvent(event)
+        })
+
         this.keys = keymap
     }
 
@@ -110,17 +123,17 @@ export class Camera {
         this.position.z -= right[2]
     }
 
-    turnLeft(angle : number = 0.1) {
+    turnLeft(angle : number = 0.01) {
         this.rotation.horizontal = (this.rotation.horizontal + angle) % (2 * Math.PI)
         this.view = vec3.rotateY(this.view, this.view, [0, 0, 0], angle)
     }
 
-    turnRight(angle : number = 0.1) {
+    turnRight(angle : number = 0.01) {
         this.rotation.horizontal = (this.rotation.horizontal - angle) % (2 * Math.PI)
         this.view = vec3.rotateY(this.view, this.view, [0, 0, 0], -angle)
     }
 
-    turnUp(angle : number = 0.1) {
+    turnUp(angle : number = 0.01) {
         if (this.rotation.vertical + angle >= Math.PI / 2) return
         this.rotation.vertical += angle
 
@@ -134,7 +147,7 @@ export class Camera {
         this.view = vec3.fromValues(res[0], res[1], res[2])
     }
 
-    turnDown(angle : number = 0.1) {
+    turnDown(angle : number = 0.01) {
         if (this.rotation.vertical - angle <= -Math.PI / 2) return
         this.rotation.vertical -= angle
 

@@ -93,6 +93,16 @@ export class Scene {
         this.shapes.push(shape)
     }
 
+    bindCamera(camera: Camera) {
+        this.camera = camera
+        document.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                console.log('lock')
+                this.canvas.requestPointerLock()
+            }
+        })
+    }
+
     draw() {
         const depthTexture = this.device.createTexture({
             size: [this.canvas.width, this.canvas.height],

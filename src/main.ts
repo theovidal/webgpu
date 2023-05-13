@@ -30,7 +30,7 @@ window.onload = async () => {
     const camera = new Camera()
     camera.ratio = canvas.width / canvas.height
     camera.position.x = -3
-    scene.camera = camera
+    scene.bindCamera(camera)
 
     window.addEventListener('resize', () => {
         camera.ratio = canvas.width / canvas.height
